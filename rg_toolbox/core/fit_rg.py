@@ -30,7 +30,8 @@ def fit_rg(raw_data, whitening_type='PCA'):
   whitening_params : dict
       Parameters of the whitening transform computed on the training data.
       Also needed if one wishes to fully invert the RG transform
-      'w_type' : The type of transform used. Either 'PCA' or 'ZCA'
+      'w_type' : The type of transform used.
+        Either 'PCA', 'ZCA' or 'no_whitening'
       'PCA_basis' : ndarray
         The (D x D) matrix containing in its columns the eigenvectors of the
         covariance matrix.
@@ -41,8 +42,12 @@ def fit_rg(raw_data, whitening_type='PCA'):
   num_components = raw_data.shape[0]
 
   # first we whiten the data
-  white_data, whitening_params = whiten(raw_data, w_type=whitening_type,
-                                        return_w_params=True)
+  if whitening_type == 'no_whitening':
+    white_data = raw_data
+    whitening_params = {'w_type': 'no_whitening'}
+  else:
+    white_data, whitening_params = whiten(raw_data, w_type=whitening_type,
+                                          return_w_params=True)
   # compute the radius of each point
   radii = np.linalg.norm(white_data, ord=2, axis=0)
   # estimate the scaling function g()

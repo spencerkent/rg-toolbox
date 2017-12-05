@@ -21,7 +21,8 @@ def apply_rg(raw_data, g_interpolator, whitening_params):
       this dataset which is used to gaussianize the data
   whitening_params : dict
       Parameters of the whitening transform computed on the training data.
-      'w_type' : The type of transform used. Either 'PCA' or 'ZCA'
+      'w_type' : The type of transform used.
+        Either 'PCA', 'ZCA', or 'no_whitening'
       'PCA_basis' : ndarray
         The (D x D) matrix containing in its columns the eigenvectors of the
         covariance matrix.
@@ -41,7 +42,10 @@ def apply_rg(raw_data, g_interpolator, whitening_params):
   num_components = raw_data.shape[0]
 
   # first we whiten the data
-  white_data = whiten(raw_data, precomputed_params=whitening_params)
+  if whitening_params['w_type'] == 'no_whitening':
+    white_data = raw_data
+  else:
+    white_data = whiten(raw_data, precomputed_params=whitening_params)
   # compute the radius of each point
   radii = np.linalg.norm(white_data, ord=2, axis=0)
   try:

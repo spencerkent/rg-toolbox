@@ -15,10 +15,12 @@ def invert_rg(gaussianized_data, orig_scaling, orig_whitening_params):
       A (D x N) array where D is the dimensionality of each datapoint and N is
       the number of datapoints in our dataset
   orig_scaling : ndarray
-      A N-dimensional vector giving the radial scaling of the data under the 
+      A N-dimensional vector giving the radial scaling of the data under the
       forward RG transform
   orig_whitening_params : dict
       Used to project the data back into the input space
+      'w_type' : The type of transform used.
+        Either 'PCA', 'ZCA', or 'no_whitening'
       'PCA_basis' : ndarray
         The (D x D) matrix containing in its columns the eigenvectors of the
         covariance matrix.
@@ -27,4 +29,7 @@ def invert_rg(gaussianized_data, orig_scaling, orig_whitening_params):
   """
   white_data = gaussianized_data / orig_scaling[None, :]
   # Now we invert the whitening transform
-  return unwhiten(white_data, orig_whitening_params)
+  if orig_whitening_params['w_type'] == 'no_whitening':
+    return white_data
+  else:
+    return unwhiten(white_data, orig_whitening_params)
