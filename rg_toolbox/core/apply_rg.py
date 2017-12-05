@@ -21,6 +21,7 @@ def apply_rg(raw_data, g_interpolator, whitening_params):
       this dataset which is used to gaussianize the data
   whitening_params : dict
       Parameters of the whitening transform computed on the training data.
+      'w_type' : The type of transform used. Either 'PCA' or 'ZCA'
       'PCA_basis' : ndarray
         The (D x D) matrix containing in its columns the eigenvectors of the
         covariance matrix.

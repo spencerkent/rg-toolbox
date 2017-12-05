@@ -8,7 +8,7 @@ from scipy.interpolate import interp1d
 from .estimate_g import estimate_g
 from .whiten import whiten
 
-def fit_rg(raw_data):
+def fit_rg(raw_data, whitening_type='PCA'):
   """
   Fit the full RG transform which includes the PCA whitening transform
 
@@ -17,6 +17,9 @@ def fit_rg(raw_data):
   raw_data : ndarray
       A (D x N) array where D is the dimensionality of each datapoint and N is
       the number of datapoints in our dataset
+  whitening_type : str
+      The type of whitening to use with the RG transform. Currently your choices
+      are 'PCA' and 'ZCA'
 
   Returns
   -------
@@ -27,6 +30,7 @@ def fit_rg(raw_data):
   whitening_params : dict
       Parameters of the whitening transform computed on the training data.
       Also needed if one wishes to fully invert the RG transform
+      'w_type' : The type of transform used. Either 'PCA' or 'ZCA'
       'PCA_basis' : ndarray
         The (D x D) matrix containing in its columns the eigenvectors of the
         covariance matrix.
@@ -37,7 +41,8 @@ def fit_rg(raw_data):
   num_components = raw_data.shape[0]
 
   # first we whiten the data
-  white_data, whitening_params = whiten(raw_data, return_w_params=True)
+  white_data, whitening_params = whiten(raw_data, w_type=whitening_type,
+                                        return_w_params=True)
   # compute the radius of each point
   radii = np.linalg.norm(white_data, ord=2, axis=0)
   # estimate the scaling function g()
